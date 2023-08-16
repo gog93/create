@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#D3D3D3"
+    tools:context=".MainActivity">
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="6dp"
+        android:text="All Experiments"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:textSize="34dp" />
+
+    <SearchView
+        android:id="@+id/search_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/textView3"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/contactRv"
+        android:layout_width="369dp"
+        android:layout_height="510dp"
+        android:layout_below="@id/search_view"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="16dp"
+        android:scrollbarThumbHorizontal="@drawable/background_input_field"
+        android:scrollbarThumbVertical="@drawable/background_input_field"
+        android:scrollbarTrackHorizontal="@drawable/background_input_field"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        tools:itemCount="@integer/material_motion_duration_long_1"
+        tools:listitem="@layout/row_contact_item" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/fab"
+        android:layout_width="150dp"
+        android:layout_height="74dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="12dp"
+        android:text="create"
+        android:textColor="@android:color/black"
+        app:backgroundTint="@android:color/white"
+        app:icon="@drawable/baseline_add_circle_24"
+        app:iconGravity="textStart"
+        app:iconTint="@android:color/black" />
+
+</RelativeLayout>

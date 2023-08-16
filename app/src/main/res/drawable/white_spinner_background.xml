@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- White background for the Spinner -->
+    <item>
+        <shape>
+            <solid android:color="@android:color/white" />
+        </shape>
+    </item>
+
+    <!-- Default dropdown arrow. Adjust its size or position if needed -->
+    <item android:right="8dp" android:drawable="@android:drawable/arrow_down_float" />
+
+</layer-list>
