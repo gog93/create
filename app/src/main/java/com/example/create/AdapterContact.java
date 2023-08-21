@@ -14,16 +14,19 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.button.MaterialButton;
+
 import java.util.ArrayList;
+import java.util.List;
 
 public class AdapterContact extends RecyclerView.Adapter<AdapterContact.ContactViewHolder> {
 
     private Context context;
-    private ArrayList<ModelContact> contactList;
+    private List<ModelContact> contactList;
     private DbHelper dbHelper;
 
 
-    public AdapterContact(Context context, ArrayList<ModelContact> contactList) {
+    public AdapterContact(Context context, List<ModelContact> contactList) {
         this.context = context;
         this.contactList = contactList;
         dbHelper = new DbHelper(context);

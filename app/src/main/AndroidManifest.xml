@@ -35,6 +35,9 @@
             android:exported="true">
         </activity> <activity
             android:name=".AddExperimentContact"
+        android:exported="true"></activity>
+        <activity
+            android:name=".Calendar_activity"
             android:exported="true">
         </activity>
     </application>

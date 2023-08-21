@@ -1,27 +1,30 @@
 package com.example.create;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageButton;
 
 import com.google.android.material.button.MaterialButton;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class MainActivity extends AppCompatActivity {
    private MaterialButton fab ;
     private RecyclerView contactRv;
-
     //db
     private DbHelper dbHelper;
-
-    //adapter
+private List<LocalDate > dates;//adapter
     private AdapterContact adapterContact;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,17 +48,44 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+        ImageButton button3 = findViewById(R.id.cal);
 
+        button3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Navigate to SecondActivity
+                Intent intent = new Intent(MainActivity.this,Calendar_activity.class);
+                startActivity(intent);
+            }
+        });
+        List<String> dateStrings = getIntent().getStringArrayListExtra("selectedDates");
+        if (dateStrings != null && !dateStrings.isEmpty()) {
+            // Convert the list of strings back to a list of LocalDate
+            dates = new ArrayList<>();
+            for (String dateString : dateStrings) {
+                dates.add(LocalDate.parse(dateString));
+            }
+        }
         loadData();
     }
 
     private void loadData() {
-        adapterContact = new AdapterContact(this, dbHelper.getAllData());
+        List<ModelContact> allData = dbHelper.getAllData();
+
+        if (dates != null && !dates.isEmpty()) {
+            allData = allData.stream()
+                    .filter(data -> {
+                        LocalDate dataDate = LocalDate.parse(data.getUpdatedTime().split(" ")[0]); // assuming format like "yyyy-MM-dd HH:mm:ss"
+                        return dates.contains(dataDate);
+                    })
+                    .collect(Collectors.toList());
+        }
+
+        adapterContact = new AdapterContact(this, allData);
         contactRv.setLayoutManager(new LinearLayoutManager(this));
-
         contactRv.setAdapter(adapterContact);
-
     }
+
 
     @Override
     protected void onResume() {

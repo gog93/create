@@ -1,0 +1,200 @@
+package com.example.create;
+
+import android.app.DatePickerDialog;
+import android.content.Intent;
+import android.os.Build;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.DatePicker;
+import android.widget.ImageButton;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.material.button.MaterialButton;
+
+import java.time.LocalDate;
+import java.time.YearMonth;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
+
+public class Calendar_activity extends AppCompatActivity implements CalendarApp.OnItemListener {
+    private TextView monthYearText;
+    private RecyclerView calendarRecyclerView;
+    private LocalDate selectedDate;
+    ArrayList<String> daysInMonthArr;
+    private List<LocalDate> markedDates2;
+    List<LocalDate> dates = new ArrayList<>();
+    private MaterialButton searchButton;
+
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.calendar_activity);
+        initWidgets();
+
+        markedDates2 = new ArrayList<>();
+        ImageButton button3 = findViewById(R.id.button3);
+
+        button3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Navigate to SecondActivity
+                Intent intent = new Intent(Calendar_activity.this, MainActivity.class);
+                startActivity(intent);
+            }
+        });
+         searchButton = findViewById(R.id.search);
+
+        searchButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Calendar_activity.this, MainActivity.class);
+                ArrayList<String> dateStrings = new ArrayList<>();
+                for (LocalDate date : dates) {
+                    dateStrings.add(date.toString()); // Convert each date to a string
+                }
+                intent.putStringArrayListExtra("selectedDates", dateStrings); // Add the list of strings to the intent
+                startActivity(intent);
+            }
+        });
+
+        selectedDate = LocalDate.now();
+        setMonthView();
+    }
+
+    private void initWidgets() {
+        calendarRecyclerView = findViewById(R.id.calendarRecyclerView);
+        monthYearText = findViewById(R.id.monthYearTV);
+        monthYearText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showDatePicker();
+            }
+        });
+    }
+
+    private void setMonthView() {
+        monthYearText.setText(monthYearFromDate(selectedDate));
+        daysInMonthArr = daysInMonthArray(selectedDate);
+
+        CalendarApp calendarAdapter = new CalendarApp(daysInMonthArr, dates, this);
+        RecyclerView.LayoutManager layoutManager = new GridLayoutManager(getApplicationContext(), 7);
+        calendarRecyclerView.setLayoutManager(layoutManager);
+        calendarRecyclerView.setAdapter(calendarAdapter);
+    }
+
+    private ArrayList<String> daysInMonthArray(LocalDate date) {
+        ArrayList<String> daysInMonthArray = new ArrayList<>();
+        YearMonth yearMonth = YearMonth.from(date);
+
+        int daysInMonth = yearMonth.lengthOfMonth();
+
+        LocalDate firstOfMonth = date.withDayOfMonth(1);
+        int dayOfWeek = firstOfMonth.getDayOfWeek().getValue();
+
+        for (int i = 1; i <= 42; i++) {
+            if (i <= dayOfWeek || i > daysInMonth + dayOfWeek) {
+                daysInMonthArray.add("");
+            } else {
+                daysInMonthArray.add(firstOfMonth.plusDays(i - dayOfWeek - 1).toString());  // Adding full date strings
+            }
+        }
+        return daysInMonthArray;
+    }
+
+
+    private String monthYearFromDate(LocalDate date) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MMMM");
+        return date.format(formatter);
+    }
+
+    public void previousMonthAction(View view) {
+        selectedDate = selectedDate.minusMonths(1);
+        setMonthView();
+    }
+
+    public void nextMonthAction(View view) {
+        selectedDate = selectedDate.plusMonths(1);
+        setMonthView();
+    }
+
+    @Override
+    public void onItemClick(int position, String dayText) {
+        if (!dayText.equals("")) {
+            String message = monthYearFromDate(selectedDate) + "-" + dayText;
+            LocalDate date = getDateFromSelectedDateAndDayText(selectedDate, dayText);
+
+            if (markedDates2.size() == 1) {
+                markedDates2.add(date);
+                TextView autoGeneratedIdTextView = findViewById(R.id.input2);
+
+                autoGeneratedIdTextView.setText(date.toString());
+
+                getDatesBetween(markedDates2.get(0), markedDates2.get(1));
+                markedDates2.clear();
+
+            } else if (markedDates2.size() == 0) {
+                markedDates2.add(date);
+                TextView autoGeneratedIdTextView = findViewById(R.id.input1);
+                autoGeneratedIdTextView.setText(date.toString());
+
+
+            }
+
+            Toast.makeText(this, "Selected Date " + message, Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private LocalDate getDateFromSelectedDateAndDayText(LocalDate selectedDate, String dayText) {
+        return selectedDate.withDayOfMonth(Integer.parseInt(dayText));
+    }
+
+    private void showDatePicker() {
+        LocalDate currentDate = selectedDate;
+        int year = currentDate.getYear();
+        int month = currentDate.getMonthValue() - 1;  // DatePickerDialog uses months indexed from 0
+        int day = currentDate.getDayOfMonth();
+
+        DatePickerDialog datePickerDialog = new DatePickerDialog(
+                this,
+                new DatePickerDialog.OnDateSetListener() {
+                    @Override
+                    public void onDateSet(DatePicker view, int selectedYear, int selectedMonth, int dayOfMonth) {
+                        selectedDate = LocalDate.of(selectedYear, selectedMonth + 1, dayOfMonth);
+                        setMonthView();
+                    }
+                }, year, month, day);
+        datePickerDialog.show();
+    }
+
+    private List<LocalDate> getDatesBetween(LocalDate startDate, LocalDate endDate) {
+
+        if (startDate.isAfter(endDate)) {
+            while (!startDate.equals(endDate)) {
+                dates.add(startDate);
+                startDate = startDate.minusDays(1);
+            }
+            dates.add(endDate);
+
+        } else if (!startDate.isAfter(endDate)) {
+            while (!startDate.equals(endDate)) {
+                dates.add(startDate);
+                startDate = startDate.plusDays(1);
+            }
+            dates.add(startDate);
+
+        }
+        setMonthView();
+        markedDates2.clear();
+        return dates;
+    }
+
+}

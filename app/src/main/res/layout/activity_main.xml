@@ -19,19 +19,36 @@
         android:textSize="34dp" />
 
     <SearchView
-        android:id="@+id/search_view"
-        android:layout_width="match_parent"
+        android:id="@+id/search_box"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/textView3"
-        android:layout_marginTop="10dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp" />
+        android:layout_marginTop="80dp"
+        android:hint="experiment name, description, id"
+        android:inputType="text"
+        android:paddingStart="10dp"
+        android:paddingEnd="10dp" />
+
+
+    <ImageButton
+        android:id="@+id/cal"
+        android:layout_width="61dp"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@id/search_box"
+        android:layout_alignBottom="@id/search_box"
+        android:layout_marginLeft="14dp"
+        android:layout_marginTop="-1dp"
+        android:layout_marginBottom="1dp"
+        android:layout_toRightOf="@id/search_box"
+        android:background="?android:attr/selectableItemBackground"
+        android:contentDescription="Go back"
+        android:src="@drawable/baseline_calendar_month_24" />
+
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/contactRv"
         android:layout_width="369dp"
         android:layout_height="510dp"
-        android:layout_below="@id/search_view"
+        android:layout_below="@id/search_box"
         android:layout_marginStart="16dp"
         android:layout_marginTop="10dp"
         android:layout_marginEnd="16dp"
