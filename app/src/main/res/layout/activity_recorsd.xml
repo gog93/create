@@ -18,7 +18,7 @@
         tools:layout_editor_absoluteX="-29dp" />
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/button"
+        android:id="@+id/record"
         android:layout_width="130dp"
         android:layout_height="60dp"
         android:layout_alignParentBottom="true"
@@ -26,47 +26,48 @@
         android:layout_marginBottom="48dp"
         android:background="@drawable/rounded_button"
         android:drawableLeft="@android:drawable/ic_notification_overlay"
-        android:textSize="15dp"
         android:text="Record"
-        android:textColor="@android:color/black"
-        app:backgroundTint="@android:color/white"
-        app:iconGravity="textStart"
-        app:iconTint="@android:color/black"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:textColor="@android:color/black"
         android:textDirection="anyRtl"
         android:textIsSelectable="true"
+        android:textSize="15dp"
         android:typeface="monospace"
         android:verticalScrollbarPosition="right"
         android:visibility="visible"
+        app:backgroundTint="@android:color/white"
+        app:iconGravity="textStart"
+        app:iconTint="@android:color/black"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.138"
-        app:layout_constraintStart_toStartOf="parent"/>
+        app:layout_constraintStart_toStartOf="parent" />
+
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/button2"
+        android:id="@+id/stop"
         android:layout_width="128dp"
         android:layout_height="60dp"
         android:background="@drawable/rounded_button"
-        app:icon="@drawable/baseline_stop_24"
         android:text="Stop"
         android:textAlignment="textEnd"
-        android:textSize="15dp"
-        android:textColor="@android:color/black"
-        app:backgroundTint="@android:color/white"
-        app:iconGravity="textStart"
-        app:iconTint="@android:color/black"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:textColor="@android:color/black"
         android:textDirection="anyRtl"
         android:textIsSelectable="true"
+        android:textSize="15dp"
         android:typeface="monospace"
         android:verticalScrollbarPosition="right"
         android:visibility="visible"
+        app:backgroundTint="@android:color/white"
+        app:icon="@drawable/baseline_stop_24"
+        app:iconGravity="textStart"
+        app:iconTint="@android:color/black"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.858"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.928"/>
+        app:layout_constraintVertical_bias="0.928" />
 
 
     <TextView
@@ -91,6 +92,96 @@
             android:layout_height="wrap_content"
             android:orientation="vertical" />
     </ScrollView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toBottomOf="@+id/graph">
+
+        <TextView
+            android:id="@+id/textView6"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Marker" />
+
+        <Switch
+            android:id="@+id/switch1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:switchMinWidth="60dp"
+            android:thumb="@drawable/thumb"
+            android:thumbTint="@android:color/black"
+            android:trackTint="@android:color/white"/>
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/markerLayout"
+        android:layout_width="346dp"
+        android:layout_height="263dp"
+        android:layout_centerInParent="true"
+        android:layout_marginTop="350dp"
+        android:orientation="vertical"
+        android:padding="10dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+    <TextView
+            android:id="@+id/markerNum"
+            android:layout_width="105dp"
+            android:layout_height="wrap_content"
+            android:inputType="textPersonName"
+            android:text="Marker_N" />
+
+        <EditText
+            android:id="@+id/markerN"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="@color/white"
+            android:inputType="textPersonName"
+            android:paddingTop="30dp"
+            android:textSize="14dp" />
+
+        <TextView
+            android:id="@+id/record"
+            android:layout_width="120dp"
+            android:layout_height="42dp"
+            android:text="Record_N" />
+
+        <EditText
+            android:id="@+id/recordN"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="@color/white"
+            android:drawablePadding="5dp"
+            android:hint="text"
+            android:inputType="text"
+            android:padding="10dp"
+            android:textColor="@color/colorTextSecondary"
+            android:textColorHint="@color/white" />
+
+        <TextView
+            android:id="@+id/markerT"
+            android:layout_width="335dp"
+            android:layout_height="wrap_content"
+            android:text="Marker_Time" />
+
+        <EditText
+            android:id="@+id/marker"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="@color/white"
+            android:inputType="textPersonName"
+            android:paddingTop="30dp"
+            android:textSize="14dp" />
+
+    </LinearLayout>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

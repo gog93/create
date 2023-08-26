@@ -1,42 +1,50 @@
 package com.example.create;
 
-import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
+import android.widget.CompoundButton;
+import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.Switch;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.button.MaterialButton;
 import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 
 public class ExperimentActivity extends AppCompatActivity {
-    private FloatingActionButton fab;
-    private RecyclerView contactRv;
+    private Switch markerSwitch;
+    private EditText marker_N, descriptionEt;
+    private DatabaseManager databaseManager;
+    private LinearLayout markerLayout;
+    private MaterialButton record;
+    private MaterialButton stop;
+    private boolean start = false;
+    private boolean isRunning = false;
 
-    private static final String TAG = "MainActivity";
-    private long initialTime; // Will store the starting time in milliseconds
+    private long initialTime;
     private long elapsedSeconds = 0;
     private Handler mHandler = new Handler();
-    private Runnable mUpdateGraphRunnable = new Runnable() {
-        @Override
-        public void run() {
-            updateGraph();
-            mHandler.postDelayed(this, 1000); // update every 1 second, adjust as necessary
-        }
-    };
-
     private GraphView graph;
     private LineGraphSeries<DataPoint> series;
     private DbHelper dbHelper;
 
     //adapter
     private ExperimentAdapterContact adapterContact;
+    private Runnable mUpdateGraphRunnable = new Runnable() {
+        @Override
+        public void run() {
+            updateGraph();
+            if (start) {
+                mHandler.postDelayed(this, 1000);
+            }
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,71 +54,103 @@ public class ExperimentActivity extends AppCompatActivity {
         initialTime = System.currentTimeMillis(); // Set initial time
 
         graph = findViewById(R.id.graph);
+        databaseManager = new DatabaseManager(this);
 
         series = new LineGraphSeries<>();
+        graph.addSeries(series);
+        marker_N = findViewById(R.id.markerN);  // Change to EditText if it's an EditText
+
+        series.setAnimated(true);
         graph.addSeries(series);
 
         // Customizing graph view
         graph.getViewport().setMinX(0);
-        graph.getViewport().setMaxX(19); // Assuming 5 data points, with indices 0 to 4
-        graph.getViewport().setMinY(0);
-        graph.getViewport().setMaxY(100); // Since we're generating random numbers between 0 and 99
+        graph.getViewport().setMaxX(19);
+
+        graph.getViewport().setMinY(-100);
+        graph.getViewport().setMaxY(100);
+// Since we're generating random numbers between 0 and 99
         graph.getViewport().setScrollable(true);
         graph.getViewport().setScalable(true);
         graph.getViewport().setScalableY(true);
         graph.getViewport().setScrollableY(true);
+        markerSwitch = findViewById(R.id.switch1);
+        markerLayout = findViewById(R.id.markerLayout);
+        markerLayout.setVisibility(View.GONE);
+        markerSwitch = findViewById(R.id.switch1);
+        markerSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
 
+                    markerLayout.setVisibility(View.VISIBLE);
+                } else {
+                    markerLayout.setVisibility(View.GONE);
+                }
+            }
+        });
+        record = findViewById(R.id.record);
+        stop = findViewById(R.id.stop);
+        record.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!start) { // This ensures that the graph will start only if it isn't already running
+                    String colorText =marker_N.getText().toString();
+                    int color = Color.BLACK;  // default to black
+                    Marker markerColor= databaseManager.findById(String.valueOf(colorText));
+                    if (!colorText.isEmpty()) {
+                        try {
+                            color = markerColor.getColor();
+                        } catch (IllegalArgumentException e) {
+                            // Handle the error, for now, we default to black
+                        }
+                    }
+                    series.setColor(color);
+                    start = true;
+                    mHandler.post(mUpdateGraphRunnable); // Start the Runnable immediately upon clicking
+                }
+            }
+        });
 
-        updateGraph(); // Update the graph
-        //initialization
-//        fab = findViewById(R.id.fab);
-//        contactRv = findViewById(R.id.contactRv);
-
-//        contactRv.setHasFixedSize(true);
-
-        // add listener
-//        fab.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                // move to new activity to add contact
-//                Intent intent = new Intent(ExperimentActivity.this, AddExperimentContact.class);
-////                intent.putExtra("isEditMode",false);
-//                startActivity(intent);
-//            }
-//        });
-
-//        loadData(id);
+        stop.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (start) { // This ensures that the graph will stop only if it's currently running
+                    start = false;
+                    mHandler.removeCallbacks(mUpdateGraphRunnable); // Stop the Runnable
+                }
+            }
+        });
     }
 
-    private void loadData(String modalId) {
-        adapterContact = new ExperimentAdapterContact(this, dbHelper.getExperimentsForModal(modalId));
-        contactRv.setLayoutManager(new LinearLayoutManager(this));
-
-        contactRv.setAdapter(adapterContact);
-
-    }
     private void updateGraph() {
         Point newPoint = generateCardiogramData(elapsedSeconds);
         series.appendData(new DataPoint(newPoint.x, newPoint.y), true, 100); // allowing a max of 100 points on the graph, adjust as necessary
 
         elapsedSeconds++;
     }
+
     private Point generateCardiogramData(long second) {
-        int y = (int) (100 * Math.sin(second * 0.2) * Math.sin(second * 0.6)); // Cardiogram-like function for simplicity
-        return new Point((int) second, y);
+        double t = second * 0.01; // adjust this value to increase/decrease the speed of the waveform
+        double y = 5 * Math.sin(5 * Math.PI * t) * Math.exp(-t) + 0.25 * Math.sin(25 * Math.PI * t);
+        return new Point((int) second, (int) (y * 20)); // Scale the y-value for visibility
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        mHandler.post(mUpdateGraphRunnable); // start updating graph when app is in the foreground
+        if (start) {
+            mHandler.post(mUpdateGraphRunnable);
+        }
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        mHandler.removeCallbacks(mUpdateGraphRunnable); // stop updating when app goes to the background
+        mHandler.removeCallbacks(mUpdateGraphRunnable);
+        isRunning = false;
     }
+
 
 //
 //    @Override
