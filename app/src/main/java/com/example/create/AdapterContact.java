@@ -14,9 +14,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.material.button.MaterialButton;
-
-import java.util.ArrayList;
 import java.util.List;
 
 public class AdapterContact extends RecyclerView.Adapter<AdapterContact.ContactViewHolder> {
@@ -63,7 +60,7 @@ public class AdapterContact extends RecyclerView.Adapter<AdapterContact.ContactV
             @Override
             public void onClick(View v) {
                 // create intent to move to contactsDetails Activity with contact id as reference
-                Intent intent = new Intent(context, ContactDetails.class);
+                Intent intent = new Intent(context, ExperimentPageActivity.class);
                 intent.putExtra("contactId", id);
                 context.startActivity(intent); // now get data from details Activity
                 Toast.makeText(context, "Heelo", Toast.LENGTH_SHORT).show();
@@ -72,7 +69,7 @@ public class AdapterContact extends RecyclerView.Adapter<AdapterContact.ContactV
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(context, ContactDetails.class);
+                Intent intent = new Intent(context, ExperimentPageActivity.class);
                 intent.putExtra("contactId", id);
                 context.startActivity(intent); // now get data from details Activity
 
