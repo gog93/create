@@ -13,7 +13,7 @@ public class AcupunctureActivity  extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.experiment_page_activity);
+        setContentView(R.layout.acupuncture_activity);
         dbHelper = new DbHelper(this);
 
         TextView acupunctureTextView = findViewById(R.id.acupuncture);
